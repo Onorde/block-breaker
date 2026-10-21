@@ -1,116 +1,147 @@
+using System;
 using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class TileBuilder : MonoBehaviour
 {
+    
+    private readonly float _hexagonOffsetYCoefficient = 0.875F;
+    private readonly float _hexagonOffsetXCoefficient = 0.76f;
+    private readonly float _rotationOffsetCoefficient = 0.2885f;
+    private readonly float _equilateralTriangleHeight = MathF.Sqrt(3) / 2;
+    private readonly float _triangleSpacingCoefficient = 0.5f;
+    
     [SerializeField] private GameObject rectanglePrefab;
     [SerializeField] private GameObject trianglePrefab;
     [SerializeField] private GameObject hexagonPrefab;
-    [Space]
-    [SerializeField] private int gridLength = 10;
-    [SerializeField] private int gridWidth = 10;
-    [SerializeField] private List<GameObject> createdTiles = new List<GameObject>();
+    [SerializeField] private GameObject circlePrefab;
     
-    private Dictionary<string, float> _prefabVariables = new Dictionary<string, float>(6);
+    [Header("Grid Variables")]
     
+    [SerializeField] [Min(1)] private int gridLength = 5;
+    [SerializeField] [Min(1)] private int gridWidth = 5;
+    [SerializeField] [Min(0)] private Vector2 gridSpacingValue;
+    [SerializeField] private List<GameObject> createdTiles = new();
+
+    private readonly Dictionary<string, bool> _prefabRequirements = new(6);
+    private float _offsetX;
+    private float _offsetY;
+    private Vector3 _rotationDegree;
+    private Vector2 _rotationOffset;
+
+
     [ContextMenu("Build Rectangle Grid")]
     private void Rectangle()
     {
-        BuildGrid(rectanglePrefab, AssignVariables(rectanglePrefab));
+        AssignVariables(rectanglePrefab);
+        BuildGrid(rectanglePrefab);
     }
+
     [ContextMenu("Build Triangle Grid")]
     private void Triangle()
     {
-        BuildGrid(trianglePrefab, AssignVariables(trianglePrefab));
+        AssignVariables(trianglePrefab);
+        BuildGrid(trianglePrefab);
     }
+
     [ContextMenu("Build Hexagon Grid")]
     private void Hexagon()
     {
-        BuildGrid(hexagonPrefab, AssignVariables(hexagonPrefab));
+        AssignVariables(hexagonPrefab);
+        BuildGrid(hexagonPrefab);
     }
+
+    [ContextMenu("Build Circle Grid")]
+    private void Circle()
+    {
+        AssignVariables(circlePrefab);
+        BuildGrid(circlePrefab);
+    }
+
     [ContextMenu("Delete Grid")]
     private void DeleteGrid()
     {
-        foreach (var tile in createdTiles)
-        {
-            DestroyImmediate(tile);
-        }
-        
+        foreach (var tile in createdTiles) DestroyImmediate(tile);
+
         createdTiles.Clear();
     }
     
-    private void CreateTile(float xPosition, float yPosition, GameObject tilePrefab, Dictionary<string, float> variables, int offsetTracker, int rotationTracker)
-    {
-        
-        GameObject newTile = Instantiate(tilePrefab, this.transform);
-        if (variables.GetValueOrDefault("needsPeriodicOffset") == 1f && (offsetTracker % 2) == 1)
-        {
-            Vector2 tilePosition = new Vector2(xPosition * variables.GetValueOrDefault("xScale"), yPosition * variables.GetValueOrDefault("yScale") - variables.GetValueOrDefault("offsetValue"));
-            newTile.transform.localPosition = tilePosition;
-        }
-        else
-        {
-            Vector2 tilePosition = new Vector2(xPosition * variables.GetValueOrDefault("xScale"), yPosition * variables.GetValueOrDefault("yScale"));
-            newTile.transform.localPosition = tilePosition;
-        }
 
-        if (variables.GetValueOrDefault("needsRotation") == 1 && (rotationTracker % 2) == 1)
-        {
-            newTile.transform.localEulerAngles = new Vector3(0,0,variables.GetValueOrDefault("rotationDegree"));
-        }
-        
-        createdTiles.Add(newTile);
-    }
-    
-    private void BuildGrid(GameObject tilePrefab, Dictionary<string, float> variables)
+    private void BuildGrid(GameObject tilePrefab)
     {
         DeleteGrid();
-        int offsetTracker = 0;
-        int rotationTracker = 0;
-        for (int z = 0; z < gridLength; z++)
+
+        bool rotationNecessary = false;
+        for (var y = 0; y < gridLength; y++)
         {
-            offsetTracker = 0;
-            for (int x = 0; x < gridWidth; x++)
+            bool periodicOffsetNecessary = false;
+            for (var x = 0; x < gridWidth; x++)
             {
-                CreateTile(x, z, tilePrefab, variables, offsetTracker, rotationTracker);
-                offsetTracker = offsetTracker + 1;
-                rotationTracker = rotationTracker + 1;
+                CreateTile(x, y, tilePrefab, rotationNecessary, periodicOffsetNecessary);
+                rotationNecessary = !rotationNecessary;
+                periodicOffsetNecessary = !periodicOffsetNecessary;
             }
         }
-        _prefabVariables.Clear();
+
+        _prefabRequirements.Clear();
+    }
+    
+    private void CreateTile(float xPosition, float yPosition, GameObject tilePrefab, bool rotationNecessary, bool periodicOffsetNecessary)
+    {
+        var newTile = Instantiate(tilePrefab, transform);
+        AdjustTransform(xPosition, yPosition, newTile, rotationNecessary, periodicOffsetNecessary);
+        createdTiles.Add(newTile);
     }
 
-    private Dictionary<string, float> AssignVariables(GameObject tilePrefab)
+    private void AdjustTransform(float xPosition, float yPosition, GameObject newTile, bool rotationNecessary, bool periodicOffsetNecessary)
+    {
+        var tilePosition = new Vector2(xPosition * _offsetX, yPosition * _offsetY);
+        newTile.transform.localPosition = tilePosition + gridSpacingValue;
+
+        if (_prefabRequirements.GetValueOrDefault("needsRotation") && rotationNecessary)
+        {
+            newTile.transform.localEulerAngles = _rotationDegree;
+            newTile.transform.localPosition = (tilePosition + _rotationOffset) + gridSpacingValue;
+        }
+        if (_prefabRequirements.GetValueOrDefault("needsPeriodicOffset") && periodicOffsetNecessary)
+        {
+            newTile.transform.localPosition = (tilePosition + new Vector2(0,_hexagonOffsetYCoefficient)) + gridSpacingValue;
+        }
+    }
+
+    private void AssignVariables(GameObject tilePrefab)
     {
         if (tilePrefab.GetComponent<SpriteRenderer>().sprite.name == "Square")
         {
-            _prefabVariables.Add("xScale", tilePrefab.transform.lossyScale.x);
-            _prefabVariables.Add("yScale", tilePrefab.transform.lossyScale.y);
-            _prefabVariables.Add("needsRotation", 0f);
-            _prefabVariables.Add("needsPeriodicOffset", 0f);
-
-            return _prefabVariables;
+            _offsetX = tilePrefab.transform.lossyScale.x + gridSpacingValue.x;
+            _offsetY = tilePrefab.transform.lossyScale.y + gridSpacingValue.y;
+            _prefabRequirements.Add("needsRotation", false);
+            _prefabRequirements.Add("needsPeriodicOffset", false);
         }
         else if (tilePrefab.GetComponent<SpriteRenderer>().sprite.name == "Triangle")
         {
-            _prefabVariables.Add("xScale", tilePrefab.transform.lossyScale.x);
-            _prefabVariables.Add("yScale", tilePrefab.transform.lossyScale.y);
-            _prefabVariables.Add("needsRotation", 1f);
-            _prefabVariables.Add("rotationDegree", 60f);
-            _prefabVariables.Add("needsPeriodicOffset", 0f);
+            _offsetX = tilePrefab.transform.lossyScale.x * _triangleSpacingCoefficient + gridSpacingValue.x;
+            _offsetY = tilePrefab.transform.lossyScale.y * _equilateralTriangleHeight + gridSpacingValue.y;
+            _prefabRequirements.Add("needsRotation", true);
+            _prefabRequirements.Add("needsPeriodicOffset", false);
+            _rotationDegree = new Vector3(0, 0, 180);
+            _rotationOffset = new Vector3(0, tilePrefab.transform.lossyScale.x * _rotationOffsetCoefficient, 0);
+        }
+        else if (tilePrefab.GetComponent<SpriteRenderer>().sprite.name == "Circle")
+        {
+            _offsetX = tilePrefab.transform.lossyScale.x + gridSpacingValue.x;
+            _offsetY = tilePrefab.transform.lossyScale.y + gridSpacingValue.y;
+            _prefabRequirements.Add("needsRotation", false);
+            _prefabRequirements.Add("needsPeriodicOffset", false);
 
-            return _prefabVariables;
         }
         else // For hexagons
         {
-            _prefabVariables.Add("xScale", tilePrefab.transform.lossyScale.x * 1.5f);
-            _prefabVariables.Add("yScale", tilePrefab.transform.lossyScale.y * Mathf.Sqrt(3));
-            _prefabVariables.Add("needsRotation", 0f);
-            _prefabVariables.Add("needsPeriodicOffset", 1f);
-            _prefabVariables.Add("offsetValue", tilePrefab.transform.lossyScale.y * Mathf.Sqrt(3));
-            return _prefabVariables;
+            _offsetX = tilePrefab.transform.lossyScale.x * _hexagonOffsetXCoefficient + gridSpacingValue.x;
+            _offsetY = tilePrefab.transform.lossyScale.y * _hexagonOffsetYCoefficient + gridSpacingValue.y;
+            _prefabRequirements.Add("needsRotation", false);
+            _prefabRequirements.Add("needsPeriodicOffset", true);
         }
-        
+
     }
 }

@@ -47,6 +47,7 @@ MonoBehaviour:
   rectanglePrefab: {fileID: 2614572526230828476, guid: 77bee3b411209757ab1b873fcea8b0fb, type: 3}
   trianglePrefab: {fileID: 4810919061213146681, guid: 98f1d25758bd427239f79a040481d06a, type: 3}
   hexagonPrefab: {fileID: 449113896194109943, guid: 9d8ee534476fadfaba1ca36c64526256, type: 3}
+  circlePrefab: {fileID: 9015051106622837419, guid: bfb1e0a36cfdc626d9f28bfaaf947dac, type: 3}
   gridLength: 5
   gridWidth: 3
   createdTiles: []
