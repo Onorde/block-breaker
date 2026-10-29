@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8071657054503102925}
   m_Layer: 0
   m_Name: Rectangle
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -155,3 +155,4 @@ MonoBehaviour:
   enemyHitPoints: 1
   damageSoundClip: {fileID: 8300000, guid: 5a6d2762869ea321aa6184f7019c2430, type: 3}
   deathSoundClip: {fileID: 8300000, guid: 7df79e92447664707aadacb353e07044, type: 3}
+  deathVFX: {fileID: -3688592825461343591, guid: 9d16aa194c7d9fd47b6b78801cfa8130, type: 3}
