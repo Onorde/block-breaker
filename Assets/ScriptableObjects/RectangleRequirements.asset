@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 694bd1d1d26d64fde8917c23974c263d, type: 3}
+  m_Name: RectangleRequirements
+  m_EditorClassIdentifier: Assembly-CSharp::TileRequirements
+  tilePrefab: {fileID: 2614572526230828476, guid: 77bee3b411209757ab1b873fcea8b0fb, type: 3}
+  needsRotation: 0
+  rotationDegree: {x: 0, y: 0, z: 0}
+  needsPeriodicOffset: 0
