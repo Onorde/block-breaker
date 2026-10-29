@@ -104,10 +104,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1056142633131852415}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebf01b1fc880a3b47a9b100dacebedcf, type: 3}
+  m_Script: {fileID: 11500000, guid: 9eb2315d1621d823ea275c5bd064c295, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerPlatform
-  speed: 8
+  speed: 10
 --- !u!70 &918340391198427659
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
