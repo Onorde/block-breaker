@@ -45,9 +45,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TileBuilder
   rectanglePrefab: {fileID: 2614572526230828476, guid: 77bee3b411209757ab1b873fcea8b0fb, type: 3}
+  rectangleRequirements: {fileID: 11400000, guid: 1902293d2a0be8e2296eb579f2a52d87, type: 2}
   trianglePrefab: {fileID: 4810919061213146681, guid: 98f1d25758bd427239f79a040481d06a, type: 3}
+  triangleRequirements: {fileID: 11400000, guid: bc44d9a835bc95159a35c8a5fe7f1881, type: 2}
   hexagonPrefab: {fileID: 449113896194109943, guid: 9d8ee534476fadfaba1ca36c64526256, type: 3}
+  hexagonRequirements: {fileID: 11400000, guid: f26315e02d09fa5c3b088349cd5f0494, type: 2}
   circlePrefab: {fileID: 9015051106622837419, guid: bfb1e0a36cfdc626d9f28bfaaf947dac, type: 3}
+  circleRequirements: {fileID: 11400000, guid: f26315e02d09fa5c3b088349cd5f0494, type: 2}
   gridLength: 5
   gridWidth: 3
+  gridSpacingValue: {x: 0, y: 0}
   createdTiles: []
