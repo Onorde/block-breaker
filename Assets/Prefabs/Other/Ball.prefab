@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8677876968336119539}
   - component: {fileID: 7653312287787955436}
   - component: {fileID: 307583259014602605}
+  - component: {fileID: -7191955646889920945}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Untagged
@@ -157,3 +158,18 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
+--- !u!114 &-7191955646889920945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5053170848892609955}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d8e63073dead852098a60040cb92dfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Ball
+  damage: 1
+  speed: 10
+  playerPlatform: {fileID: 1056142633131852415, guid: c79d0d74cf8e6c56a8c6bf5ad06b4ff5, type: 3}

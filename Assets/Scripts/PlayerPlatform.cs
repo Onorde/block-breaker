@@ -8,6 +8,7 @@ public class Platform : MonoBehaviour
     private float _horizontalInput;
     private Rigidbody2D _rBody;
 
+    private bool _gamePaused;
 
     private void Awake()
     {
@@ -26,7 +27,7 @@ public class Platform : MonoBehaviour
         
         var leftPressed = playerKeyboard.aKey.isPressed || playerKeyboard.leftArrowKey.isPressed;
         var rightPressed = playerKeyboard.dKey.isPressed || playerKeyboard.rightArrowKey.isPressed;
-
+        
         // Opposing Movement keys pressed
         if (leftPressed == rightPressed)
             _horizontalInput = 0f;
